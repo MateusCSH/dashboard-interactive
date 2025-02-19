@@ -1,0 +1,214 @@
+
+.container {
+    display: grid;
+    padding: 1rem;
+    border: 1px solid red;
+    max-width: 120px;
+    text-transform: uppercase;
+    text-align: center;
+    border-radius: 4px;
+    position: relative;
+}
+
+.value {
+    font-size: 1rem;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    visibility: hidden;
+}
+
+.container:hover p {
+    visibility: hidden;
+}
+.container:hover .value {
+    visibility: visible;
+}
+
+.container:hover {
+    background: radial-gradient(circle, blue, rgb(103, 184, 187));
+}
+
+.container::before {
+    position: absolute;
+    content: " ";
+    background: red;
+    width: 40px;
+    height: 4px;
+    right: -30px;
+    top: 5px;
+}
+
+
+
+
+/* MARCADORES */
+.marcacao {
+    display: grid;
+    justify-content: center;
+    padding: 5px;
+    position: relative;
+    margin: 10px;
+}
+
+.marcacao::before {
+    content: "";
+    position: absolute;
+    background: blue;
+    width: 480px;
+    height: 5px;
+    bottom: 15px;
+    left: 110px;
+}
+
+.marcacao p{
+    font-size: 1.3rem;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    letter-spacing: 0.05rem;
+    color: #e3e3e3;
+    text-transform: uppercase;
+}
+
+
+
+
+/* FAZER EM OUTRO ARQUIVO SE NECESSÁRIO PARA DEIXA TUDO CERTINHO E BEM ORGANIZADO */
+.container_cards_externo {
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+    /* margin-bottom: 20px; */
+}
+
+.container_cards_interno {
+    display: grid;
+    border: 1px solid white;
+    padding: 1rem 1rem; 
+    border-radius: 4px;  
+    gap: 10px;
+    justify-items: center;
+    text-transform: uppercase;
+    /* background: #00bfff; */
+    background: linear-gradient(135deg, #00bfff, #8a2be2, #4b0082, #000000);
+    color: #D3D3D3;
+    font-weight: bold;      
+}
+
+.container_cards_interno:hover {
+    scale: 105%;
+    transition: 0.5s;
+}
+
+
+.container_cards_interno p{
+    text-transform: lowercase;
+    font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* style.css */
+
+/* styles/custom.css */
+/* Container principal do rádio */
+div[data-testid="stRadio"] {
+    border: 2px solid #4b0082;       /* Borda roxa */
+    border-radius: 10px;             /* Cantos arredondados */
+    /* background-color: #f0e6ff;       Fundo roxo claro */
+    background-color: transparent; 
+    background-image: linear-gradient(135deg, #00bfff, #8a2be2, #4b0082, #000000);    
+    padding: 15px;                   /* Espaçamento interno */
+    margin: 10px 0;                  /* Margem externa */
+    /* max-width: 100%; */
+    /* justify-items: center; */
+}
+
+div[data-testid="stRadio"] div[role="radiogroup"] {
+    display: flex;
+    /* flex-direction: column; */
+    gap: 40px;  /* Espaçamento entre as opções */
+    justify-content: center;
+}
+
+/* Título da pergunta */
+div[data-testid="stRadio"] label {
+    /* color: #4b0082;                  Cor do texto */
+    color: white;                  /* Cor do texto */
+    font-weight: bold;               /* Negrito */
+    margin-bottom: 10px;             /* Espaço abaixo */
+    display: block;                  /* Garantir quebra de linha */
+}
+
+/* Opções individuais */
+div[data-testid="stRadio"] div[role="radiogroup"] label {
+    background-color: transparent;        /* Fundo branco */
+    border: 1px solid #4b0082;        /* Borda fina */
+    border-radius: 5px;               /* Arredondamento suave */
+    padding: 8px 12px;                /* Espaçamento interno */
+    margin: 4px 0;                    /* Margem entre opções */
+    transition: all 0.3s ease;        /* Efeito de transição */
+}
+
+/* Efeito hover nas opções */
+div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
+    background-color: #8e6abd;        /* Fundo hover */
+    transform: translateY(-2px);      /* Levantar ligeiramente */
+}
+
+/* Opção selecionada */
+div[data-testid="stRadio"] div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) {
+    background-color: #4b0082;        /* Fundo roxo escuro */
+    color: white;                      /* Texto branco */
+    border-color: #4b0082;             /* Borda combinando */
+}
+
+
+
+
+/* INPUT POR NOME */
+/* Container principal */
+div[data-testid="stTextInput"] {
+    border: 2.5px solid #4b0082;
+    border-radius: 10px;
+    background-color: transparent;
+    padding: 15px;
+    margin: 15px 0;
+    animation: loop 3s infinite;
+}
+
+
+@keyframes loop {
+   0%{
+    border: 2.5px solid #4b0082;
+   }
+
+   50% {
+    border: 2.5px solid #03fdfd;
+   }
+}
+
+
+/* Campo de input */
+div[data-testid="stTextInput"] input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #4b0082;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    color: black;
+    font-weight: bold;
+}
+
+
+
