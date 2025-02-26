@@ -212,3 +212,39 @@ div[data-testid="stTextInput"] input {
 
 
 
+
+
+
+
+
+/* PARTE DE MONITOR */
+
+.monitor_externo {
+    display: flex;
+    gap: 60px;
+    justify-self: center;
+    margin-bottom: 20px;
+}
+
+.monitor_interno {
+    display: flexbox;
+    /* grid-template-columns: repeat(3, 1fr); */
+    flex-wrap: nowrap;
+    border: 1px solid #4b0082;
+    padding: 1rem 1rem;
+    background: #00bfff;
+       
+         
+}
+
+.monitor_interno:hover {
+    scale: 105%;
+    transition: 0.5s;
+}
+
+
+.monitor_interno p{
+    text-transform: lowercase;
+    font-weight: bold;
+    justify-self: center;
+}
