@@ -5,10 +5,12 @@ import plotly.express as px
 from datetime import datetime, timedelta
 from services.conversao_hrs import conversor
 from services.gráfico_bar_vert import grafico_barras
+from services.gráfico_pizza import grafico_pizza
 from services.calcular_hrs import cont
-from services.pegar_menor_hr import menor_hr
+from services.pegar_menor_hr import menor_hr, menor_private
 from services.pegar_maior_hr import maior_hr, maior_private
 from services.three_cards import cards
+from services.card_qtd_monitor import card_qtd_monitor
 
 # LEMBRE DE POR NA PASTA PRICIPAL E DEPOIS RODAR O COMANDO:
 # streamlit run app/main.py
@@ -77,6 +79,13 @@ if file is not None:
             grafico_barras(df_filt)
 
 
+            # GRÁFICO DE PIZZA
+            st.markdown(f"""<div class = 'marcacao'>
+                        <p>RELATÓRIO GRÁFICO TEMPO DE PERMANÊNCIA</p>
+                        </div>""", unsafe_allow_html=True)
+            grafico_pizza(df_filt)
+
+
             # Atendimentos por Dia.
             st.markdown(f"""<div class = 'marcacao'>
                         <p>Atendimentos por Dia</p>
@@ -90,6 +99,8 @@ if file is not None:
                         </div>""", unsafe_allow_html=True)
             motivos_contagem = df['Motivo'].value_counts().reset_index()
             st.bar_chart(motivos_contagem.set_index('Motivo'))
+
+            
 
 
         if opcao_gp == 'Relatório escrito':
@@ -107,10 +118,10 @@ if file is not None:
                 # st.write(f'Horas totais para {motivo}: {hrs_motivo_x}')          
                 
                 # Função para mostrar menor tempo
-                smalltime = menor_hr(df_filtrado2)
+                smalltime = menor_private(df_filtrado2)
 
                 # Função para mostrar maior tempo
-                biggesttime = maior_hr(df_filtrado2)
+                biggesttime = maior_private(df_filtrado2)
                 
                 st.markdown(f""" <div class='container_cards_externo'>
                             <div class='container_cards_interno'> Horas totais 
@@ -163,13 +174,12 @@ if file is not None:
                 # st.text(f'Tempo total: {int(horas_totais)}h:{int(minutos_totais):02d}min')
 
 
-                # CRIAR OS 3 CARDS AGR
-
-                st.markdown(f"""<div class='container_cards_externo'>
-                            <div class='container_cards_interno'> Horas totais <p>{int(horas_totais)}h:{int(minutos_totais):02d}min </p> </div>
-                            <div class='container_cards_interno'> Maior tempo <p>{horas}h:{minutos}min</p></div>
-                            <div class='container_cards_interno'> Menor tempo <p>{min_horas}h:{min_minutos}min </p></div>
-                            </div>""", unsafe_allow_html=True)
+                # POR DADOS NO CARD            
+                
+                h_tot = f'{horas_totais:.0f}h:{minutos_totais:.0f}min'
+                h_m = f'{horas}h:{minutos:.0f}min'
+                min_h_min_m = f'{min_horas}h:{min_minutos:.0f}min'
+                cards(df_filt_date, h_tot, h_m, min_h_min_m)
 
 
 
@@ -185,13 +195,7 @@ if file is not None:
                 # Função para mostrar maior tempo
                 biggesttime = maior_hr(df)
 
-                st.markdown(f""" <div class='container_cards_externo'>
-                            <div class='container_cards_interno'> Horas totais 
-                            <p>{(hrs_motivo_x)}</p> </div>
-                            <div class='container_cards_interno'> Maior tempo 
-                            <p>{biggesttime}</p> </div>
-                            <div class='container_cards_interno'> Menor tempo 
-                            <p>{smalltime}</p> </div></div>""", unsafe_allow_html=True)
+                cards(df, hrs_motivo_x, biggesttime, smalltime)
 
 
                 selected_color = st.radio('Selecione:', ['Green', 'Red', 'Black'], key='styledradio', horizontal=True)
@@ -205,8 +209,8 @@ if file is not None:
                     if not df_filtered.empty:
                         st.write(df_filtered)
                         qtd_hrs_nome = cont(df_filtered)
-                        maior_p_nome = maior_hr(df_filtered)
-                        menor_p_nome = menor_hr(df_filtered)
+                        maior_p_nome = maior_private(df_filtered)
+                        menor_p_nome = menor_private(df_filtered)
 
                         cards(df_filtered, qtd_hrs_nome, maior_p_nome, menor_p_nome)
                         
@@ -217,7 +221,29 @@ if file is not None:
 
                 st.markdown('<i class="fa-solid fa-down-long"></i> Texto com ícone', unsafe_allow_html=True)
 
-                maior_private(df)
+                # maior_private(df_filtered)
+
+    if opcao == 'Cards':
+        
+        st.title('Cards')
+
+        # MOSTRAR QUANTIDADE DE MONITORES,
+        qtd_monitor = df['Nome'].count()
+        # st.header(qtd_monitor)
+
+        qtd_vezes = df.groupby('Nome')['Nome'].count()
+        nome_max = qtd_vezes.idxmax()
+        nome_min = qtd_vezes.idxmin()
+        # st.write(qtd_vezes.max())
+        # st.write(nome)
+
+        card_qtd_monitor(df, qtd_monitor, qtd_vezes.max(), nome_max)
+        card_qtd_monitor(df, qtd_monitor, qtd_vezes.min(), nome_min)
+
+        VIDEO_URL = "https://www.youtube.com/watch?v=bbOw3Q2cRrw"
+        st.video(VIDEO_URL)
+
+
 
                 
                 
