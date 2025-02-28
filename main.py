@@ -134,78 +134,89 @@ if file is not None:
 
 
 
-                # CRIAR CAMPO DE BUSCA POR NOME, MOSTRAR DATASET FILTRADO, HOARS DA PESSOA.. INFORMAÇÕES. 
-                data = st.date_input('Selecione a data de pesquisa', min_value=df['Data'].min().date(), max_value=df['Data'].max().date())
+                # CRIAR CAMPO DE BUSCA POR NOME, MOSTRAR DATASET FILTRADO, HOARS DA PESSOA.. INFORMAÇÕES.
+                available_dates = df['Data'].dt.date.unique() 
+                # data = st.date_input('Selecione a data de pesquisa', min_value=df['Data'].min().date(), max_value=df['Data'].max().date())
+                data = st.date_input(
+                    'Selecione a data de pesquisa',
+                    min_value=available_dates.min(),
+                    max_value=available_dates.max(),
+                    value=available_dates.min()  # Valor inicial padrão
+)
+                if data in available_dates:
+                    df_filt_date = df[df['Data'].dt.date == data]
+                    st.dataframe(df_filt_date)
+                    df_filt_date['Duração'] = pd.to_timedelta(df_filt_date['Duração'])
+                    # st.write(f'Horas totais para {data}: {df_filt_date["Duração"].sum()}')
+
+                    # Extrair horas e minutos
+                    df_filt_date['horas'] = df_filt_date['Duração'].dt.total_seconds() // 3600  # Horas
+                    df_filt_date['minutos'] = (df_filt_date['Duração'].dt.total_seconds() % 3600) // 60  # Minutos
+
+                    # Calcular o valor decimal (horas + minutos/100)
+                    df_filt_date['temp'] = df_filt_date['horas'] + (df_filt_date['minutos'] / 100)
+
+                    # Encontrar o maior valor de tempo
+                    max_temp = df_filt_date['temp'].max()
+                    min_temp = df_filt_date['temp'].min()
+
+                    # Extrair horas e minutos do maior e menor valor
+                    horas = int(max_temp)
+                    minutos = int((max_temp - horas) * 100)
+                    min_horas = int(min_temp)
+                    min_minutos = int((min_temp - min_horas) * 100)
+
+                    # Exibir o maior tempo no formato hh:mm
+                    # st.text(f'Maior hr: {horas}h:{minutos:02d}min')
+                    # st.text(f'Menor hr: {min_horas}h:{min_minutos:02d}min')
+
+
+
+
+                    tempo_total = df_filt_date['Duração'].sum()
+                    
+                    # Extrair horas e minutos do total
+                    horas_totais = tempo_total.total_seconds() // 3600
+                    minutos_totais = (tempo_total.total_seconds() % 3600) // 60
+                    # st.text(f'Tempo total: {int(horas_totais)}h:{int(minutos_totais):02d}min')
+
+
+                    # POR DADOS NO CARD            
+                    
+                    h_tot = f'{horas_totais:.0f}h:{minutos_totais:.0f}min'
+                    h_m = f'{horas}h:{minutos:.0f}min'
+                    min_h_min_m = f'{min_horas}h:{min_minutos:.0f}min'
+                    cards(df_filt_date, h_tot, h_m, min_h_min_m)
+
                 
-                df_filt_date = df[df['Data'].dt.date == data]
-                st.dataframe(df_filt_date)
-                df_filt_date['Duração'] = pd.to_timedelta(df_filt_date['Duração'])
-                # st.write(f'Horas totais para {data}: {df_filt_date["Duração"].sum()}')
-
-                # Extrair horas e minutos
-                df_filt_date['horas'] = df_filt_date['Duração'].dt.total_seconds() // 3600  # Horas
-                df_filt_date['minutos'] = (df_filt_date['Duração'].dt.total_seconds() % 3600) // 60  # Minutos
-
-                # Calcular o valor decimal (horas + minutos/100)
-                df_filt_date['temp'] = df_filt_date['horas'] + (df_filt_date['minutos'] / 100)
-
-                # Encontrar o maior valor de tempo
-                max_temp = df_filt_date['temp'].max()
-                min_temp = df_filt_date['temp'].min()
-
-                # Extrair horas e minutos do maior e menor valor
-                horas = int(max_temp)
-                minutos = int((max_temp - horas) * 100)
-                min_horas = int(min_temp)
-                min_minutos = int((min_temp - min_horas) * 100)
-
-                # Exibir o maior tempo no formato hh:mm
-                # st.text(f'Maior hr: {horas}h:{minutos:02d}min')
-                # st.text(f'Menor hr: {min_horas}h:{min_minutos:02d}min')
-
-
-
-
-                tempo_total = df_filt_date['Duração'].sum()
-                
-                # Extrair horas e minutos do total
-                horas_totais = tempo_total.total_seconds() // 3600
-                minutos_totais = (tempo_total.total_seconds() % 3600) // 60
-                # st.text(f'Tempo total: {int(horas_totais)}h:{int(minutos_totais):02d}min')
-
-
-                # POR DADOS NO CARD            
-                
-                h_tot = f'{horas_totais:.0f}h:{minutos_totais:.0f}min'
-                h_m = f'{horas}h:{minutos:.0f}min'
-                min_h_min_m = f'{min_horas}h:{min_minutos:.0f}min'
-                cards(df_filt_date, h_tot, h_m, min_h_min_m)
-
-
 
                 
 
-                st.markdown(f"""<div class = 'marcacao'>
-                        <p>TEMPO TOTAL</p>
-                        </div>""", unsafe_allow_html=True)
+                    st.markdown(f"""<div class = 'marcacao'>
+                            <p>TEMPO TOTAL</p>
+                            </div>""", unsafe_allow_html=True)
+                    
+                    hrs_motivo_x = cont(df)                 
+                    # Função para mostrar menor tempo
+                    smalltime = menor_hr(df)
+                    # Função para mostrar maior tempo
+                    biggesttime = maior_hr(df)
+
+                    cards(df, hrs_motivo_x, biggesttime, smalltime)
                 
-                hrs_motivo_x = cont(df)                 
-                # Função para mostrar menor tempo
-                smalltime = menor_hr(df)
-                # Função para mostrar maior tempo
-                biggesttime = maior_hr(df)
-
-                cards(df, hrs_motivo_x, biggesttime, smalltime)
+                else:
+                    st.warning("Data selecionada não encontrada na base de dados!")
 
 
-                selected_color = st.radio('Selecione:', ['Green', 'Red', 'Black'], key='styledradio', horizontal=True)
+
+                # selected_color = st.radio('Selecione:', ['Green', 'Red', 'Black'], key='styledradio', horizontal=True)
 
                 select_name = st.text_input('Digite o nome para busca:', key='namekey', max_chars=50)
-
+                name = select_name.strip().lower()
                 # Verifique se o nome não está vazio
                 if select_name: 
                     # Verifique se o nome existe na coluna "Nome"
-                    df_filtered = df[df['Nome'].str.lower() == select_name.lower()]
+                    df_filtered = df[df['Nome'].str.lower().str.contains(name, na=False)]
                     if not df_filtered.empty:
                         st.write(df_filtered)
                         qtd_hrs_nome = cont(df_filtered)
