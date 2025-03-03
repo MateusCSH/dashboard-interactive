@@ -11,6 +11,8 @@ from services.pegar_menor_hr import menor_hr, menor_private
 from services.pegar_maior_hr import maior_hr, maior_private
 from services.three_cards import cards
 from services.card_qtd_monitor import card_qtd_monitor
+from services.bloxplot import bloxplot
+from services.gráfico_dias_semana import dias_semana
 
 # LEMBRE DE POR NA PASTA PRICIPAL E DEPOIS RODAR O COMANDO:
 # streamlit run app/main.py
@@ -98,9 +100,31 @@ if file is not None:
                         <p>motivos mais frequentes</p>
                         </div>""", unsafe_allow_html=True)
             motivos_contagem = df['Motivo'].value_counts().reset_index()
-            st.bar_chart(motivos_contagem.set_index('Motivo'))
+            st.bar_chart(motivos_contagem.set_index('Motivo'), color='rgb(135, 206, 235)')
 
+
+            # dias mais frequentes.
+            st.markdown(f"""<div class = 'marcacao'>
+                        <p>Dias mais frequentes</p>
+                        </div>""", unsafe_allow_html=True)
+            dias_semana(df)
             
+
+
+            # BLOXBPLOT.
+            st.markdown(f"""<div class = 'marcacao'>
+                        <p>Gráfico BloxPlot</p>
+                        </div>""", unsafe_allow_html=True)
+            bloxplot(df)
+
+
+            df["Duração_min"] = df["Duração"].dt.total_seconds() / 60  # Converter para minutos
+            anomalias = df[(df["Duração_min"] > (60*5)) | (df["Duração_min"] < 15)]
+            if not anomalias.empty:
+                st.warning("⚠️ Registros com durações atípicas:")
+                st.dataframe(anomalias)
+
+                  
 
 
         if opcao_gp == 'Relatório escrito':
@@ -232,7 +256,10 @@ if file is not None:
 
                 st.markdown('<i class="fa-solid fa-down-long"></i> Texto com ícone', unsafe_allow_html=True)
 
-                # maior_private(df_filtered)
+
+
+
+                
 
     if opcao == 'Cards':
         
@@ -256,7 +283,7 @@ if file is not None:
 
 
 
-                
+        
                 
 
 
