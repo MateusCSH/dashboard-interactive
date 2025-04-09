@@ -13,13 +13,9 @@ from services.three_cards import cards
 from services.card_qtd_monitor import card_qtd_monitor
 from services.bloxplot import bloxplot
 from services.gráfico_dias_semana import dias_semana
+from main2 import code
 
-# LEMBRE DE POR NA PASTA PRICIPAL E DEPOIS RODAR O COMANDO:
-# streamlit run app/main.py
-# Na pasta pricipal acesse o diretorio e o arquivo já inicializando o app.
-
-# Separar por pessoa
-# Realizar soma das horas [saida - entrada], limitando a 6 horas diárias
+# LEMBRE DE POR NA PASTA PRICIPAL 
 
 with open("style.css", 'r',encoding='utf') as r:
     st.markdown(f"<style>{r.read()}</style>",unsafe_allow_html=True)
@@ -41,7 +37,7 @@ if file is not None:
     print('Dataframe que vamos trabalhar: ', df)   
 
     
-    # Converter as colunas para datetime e time
+    # Converter as colunas
     conversor(df)
 
     df = df[["Nome", "Data", "Motivo", "Horário de entrada", "Horário de Saída", "Duração (hh:mm)"]]
@@ -56,7 +52,7 @@ if file is not None:
     df['Duração'] = df['Duração (hh:mm)'].apply(lambda x: timedelta(hours=int(x.split(':')[0]), minutes=int(x.split(':')[1])))
 
     st.sidebar.markdown('Selecione o que deseja')
-    opcao = st.sidebar.radio('Selecione a opção que deseja ver', ['Gráfico','Cards'])
+    opcao = st.sidebar.radio('Selecione a opção que deseja ver', ['Gráfico','Cards', 'Users'])
     if opcao == 'Gráfico':
         opcao_gp = st.radio('Selecione o tipo:', ['Relatório gráfico', 'Relatório escrito'], horizontal=True)
         
@@ -65,10 +61,10 @@ if file is not None:
             # GRÁFICO COM AS HORAS POR PESSOA.
             df_filt = df.groupby('Nome',)['Duração'].sum().reset_index()
 
-            # Agora, converta a coluna 'Duração' (Timedelta) para horas numéricas
+            # coluna 'Duração'  para horas 
             df_filt['Horas'] = df_filt['Duração'].apply(lambda td: td.total_seconds() / 3600)
 
-            # Agora converta a coluna 'Horas' para horas no formato 'hh:mm' para exibição no gráfico
+            # coluna 'Horas' para horas no formato 'hh:mm'
             df_filt['Horas (hh:mm)'] = df_filt['Horas'].apply(lambda h: f"{int(h):02}:{int((h % 1) * 60):02}")
             # st.text(f"Duração total para {df_filt['Horas (hh:mm)']}")    
 
@@ -157,7 +153,11 @@ if file is not None:
 
 
 
-
+                print(f"TIPO: {df['Data'].dtype}")
+                df['Data'] = pd.to_datetime(df['Data'], format="%d/%m/%Y", errors='coerce')
+                if df['Data'].isnull().any():
+                    print("Valores nulos encontrados na coluna 'Data':")
+                    print(df[df['Data'].isnull()])
                 # CRIAR CAMPO DE BUSCA POR NOME, MOSTRAR DATASET FILTRADO, HOARS DA PESSOA.. INFORMAÇÕES.
                 available_dates = df['Data'].dt.date.unique() 
                 # data = st.date_input('Selecione a data de pesquisa', min_value=df['Data'].min().date(), max_value=df['Data'].max().date())
@@ -283,39 +283,8 @@ if file is not None:
 
 
 
-        
-                
-
-
-
-
-
-                
-
-                # def icon_button(icon, text, key):
-                #     st.markdown(f"""
-                #     <style>
-                #     #{key} {{
-                #         border: 2px solid #4b0082;
-                #         border-radius: 5px;
-                #         padding: 10px 20px;
-                #         cursor: pointer;
-                #         transition: all 0.3s;
-                #     }}
-                #     #{key}:hover {{ background: #4b0082; color: white; }}
-                #     </style>
-                #     <div id="{key}" onclick="document.getElementById('{key}-hidden').click()">
-                #         <i class="{icon}"></i> {text}
-                #     </div>
-                #     """, unsafe_allow_html=True)
-                    
-                #     return st.checkbox("", key=f"{key}-hidden", label_visibility="hidden")
-
-                # if icon_button("fas fa-download", "Download", "btn1"):
-                #     st.write("Download iniciado!")
-                   
-
-
+    if opcao == 'Users':
+        code()        
 
 
 
