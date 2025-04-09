@@ -1,6 +1,7 @@
 
 import streamlit as st
 import plotly.express as px
+import pandas as pd
 
 def dias_semana(df):
 
@@ -21,6 +22,7 @@ def dias_semana(df):
         "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"
     ]
 
+    df["Data"] = pd.to_datetime(df["Data"], format="%d/%m/%Y", errors="coerce")
     # Criar coluna com dias em português
     df["Dia_Semana"] = df["Data"].dt.day_name().map(dias_tradução)
 
